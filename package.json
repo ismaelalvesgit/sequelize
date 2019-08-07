@@ -1,0 +1,35 @@
+{
+  "name": "api-sql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.6",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^8.5.1",
+    "mariadb": "^2.1.0",
+    "mysql2": "^1.6.5",
+    "pg": "^7.12.0",
+    "pg-hstore": "^2.3.3",
+    "restify": "^8.4.0",
+    "restify-errors": "^8.0.1",
+    "sequelize": "^5.12.3",
+    "sqlite3": "^4.0.9"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/bluebird": "^3.5.27",
+    "@types/cors": "^2.8.5",
+    "@types/jsonwebtoken": "^8.3.2",
+    "@types/node": "^12.7.0",
+    "@types/restify": "^7.2.12",
+    "@types/restify-errors": "^4.3.3",
+    "typescript": "^3.5.3"
+  }
+}
