@@ -55,7 +55,7 @@ export class Server {
   }
 
   bootstrap(routers: Router[] = []): Promise<Server>{
-    return  this.inicializeDb().sync({force:true}).then(()=> this.initRoutes(routers).then(()=> this))  
+    return  this.inicializeDb().sync({alter:true}).then(()=> this.initRoutes(routers).then(()=> this))  
   }
 
   shutdown(){
