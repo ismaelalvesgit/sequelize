@@ -87,21 +87,19 @@ Usuario.init({
       type: new DataTypes.STRING(255),
       allowNull:false,
       validate:{
-        notNull: {
-          msg: 'senha e requirido'
-        },
         min:{
           args:[6],
           msg:'minimo 6 caracteres'
-        }
+        },
+        notNull: {
+          msg: 'senha e requirido'
+        },
       }
     }
   }, {
     hooks:{
-      beforeValidate:(usuario:Usuario)=>{
-        {
-          usuario.senha = bcrypt.hashSync(usuario.senha, environment.security.saltRounds);
-        }
+      afterValidate:(usuario:Usuario)=>{
+        usuario.senha = bcrypt.hashSync(usuario.senha, environment.security.saltRounds);
       },
     },
     defaultScope:{

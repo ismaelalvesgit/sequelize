@@ -1,10 +1,10 @@
 import {Server} from './server/server'
-import { mainRouter } from './app/routers/main.router';
+import { usuarioController } from './app/controllers/usuario.controller';
 
 
 const server = new Server()
 server.bootstrap([
-  mainRouter
+  usuarioController
 ]).then(server=>{
   console.log('Server is listening on:', server.application.address())
 }).catch(error=>{

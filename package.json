@@ -11,10 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^3.0.6",
+    "bunyan": "^1.8.12",
     "cors": "^2.8.5",
     "jsonwebtoken": "^8.5.1",
     "mariadb": "^2.1.0",
     "mysql2": "^1.6.5",
+    "nodemailer": "^6.3.0",
     "pg": "^7.12.0",
     "pg-hstore": "^2.3.3",
     "restify": "^8.4.0",
@@ -25,12 +27,18 @@
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/bluebird": "^3.5.27",
+    "@types/bunyan": "^1.8.6",
     "@types/cors": "^2.8.5",
     "@types/jsonwebtoken": "^8.3.2",
     "@types/node": "^12.7.0",
+    "@types/nodemailer": "^6.2.1",
+    "@types/nodemailer-direct-transport": "^1.0.31",
+    "@types/nodemailer-smtp-transport": "^2.7.4",
     "@types/restify": "^7.2.12",
     "@types/restify-errors": "^4.3.3",
     "@types/validator": "^10.11.2",
+    "install": "^0.13.0",
+    "npm": "^6.10.3",
     "typescript": "^3.5.3"
   }
 }

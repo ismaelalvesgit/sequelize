@@ -8,9 +8,20 @@ export const environment = {
   },
   security: {
     saltRounds: process.env.SALT_ROUNDS || 10,
-    apiSecret: process.env.API_SECERT || 'meat-api-secret',
+    apiSecret: process.env.API_SECERT || 'ecommerce-api-secret',
     enableHTTPS: process.env.ENABLE_HTTPS || false,
     certificate: process.env.CERTI_FILE || './security/keys/cert.pem',
     key: process.env.CERT_KEY_FILE || './security/keys/key.pem'
+  },
+  log: {
+    level: process.env.LOG_LEVEL || 'debug',
+    name: 'ecommerce-api-logger'
+  },
+  email:{
+    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+    port: process.env.EMAIL_PORT ||  587,
+    secure: process.env.EMAIL_SECURE || false,
+    user: process.env.EMAIL_USER || 'cearaismael1997@gmail.com',
+    pass: process.env.EMAIL_PASSWORD || 'ceara88834442',
   }
 }

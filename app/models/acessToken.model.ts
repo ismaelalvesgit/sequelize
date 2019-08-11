@@ -29,7 +29,7 @@ AcessToken.init({
         },
         allowNull: false,
     },
-    validade:{
+    validate:{
         type: new DataTypes.DATE,
         allowNull:true
     },
