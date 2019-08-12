@@ -22,6 +22,6 @@ export const environment = {
     port: process.env.EMAIL_PORT ||  587,
     secure: process.env.EMAIL_SECURE || false,
     user: process.env.EMAIL_USER || 'cearaismael1997@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'ceara88834442',
+    pass: process.env.EMAIL_PASSWORD || '',
   }
 }
