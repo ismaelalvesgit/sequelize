@@ -14,11 +14,21 @@ export class Usuario  extends Model{
     tipoUsuario!:string
     cpf!:string
     senha!:string
-
+    online!:boolean
+    ultimoAcesso!:Date
+    
     // timestamps!
     readonly dataRegistro!: Date;
     readonly dataAtualizacao!: Date;
     readonly dataDelete!: Date;
+
+    updateToken(token:string, user:Usuario){
+      return AcessToken.update({token:token, validate: new Date(new Date().getTime() + 60 *60000)},{
+        where:{
+          idUsuario:user.id
+        }
+      })
+    }
 }
 
 Usuario.init({
@@ -35,6 +45,15 @@ Usuario.init({
           msg: 'nome e requirido'
         },
       }
+    },
+    online: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
+    },
+    ultimoAcesso: {
+      type: new DataTypes.DATE,
+      allowNull: true,
     },
     email: {
       type: new DataTypes.STRING(255),
@@ -99,7 +118,9 @@ Usuario.init({
   }, {
     hooks:{
       afterValidate:(usuario:Usuario)=>{
-        usuario.senha = bcrypt.hashSync(usuario.senha, environment.security.saltRounds);
+        if(usuario.senha){
+          usuario.senha = bcrypt.hashSync(usuario.senha, environment.security.saltRounds);
+        }
       },
     },
     defaultScope:{
@@ -112,6 +133,7 @@ Usuario.init({
     createdAt: 'dataRegistro',
     updatedAt: 'dataAtualizacao',
     deletedAt: 'dataDelete',
+    underscored: true,
     sequelize: sequelize, // this bit is important
 });
 

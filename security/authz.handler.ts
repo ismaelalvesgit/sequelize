@@ -4,13 +4,14 @@ import { environment } from "../common/environment";
 import {ForbiddenError} from 'restify-errors'
 import { InvalidCredentialsError } from 'restify-errors';
 import { Usuario } from '../app/models/usuario.model';
+import { utils } from '../app/utils/util';
 
 export const authorize: (...profiles: string[])=> restify.RequestHandler = (...profiles)=>{
   return (req, resp, next)=>{
     if(req.headers.authorization !== undefined){
         const token = req.headers.authorization
         try {
-          const verify:any = jwt.verify(token, environment.security.apiSecret)
+          const verify:any = utils.verfiricaToken(token)
           Usuario.findOne({
             where:{
               email:verify.sub

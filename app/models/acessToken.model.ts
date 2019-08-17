@@ -37,11 +37,12 @@ AcessToken.init({
         type: new DataTypes.STRING(255),
         allowNull:true
     }
-  }, {
+  },{
     tableName: 'acess_token',
     modelName:'acessToken',
     createdAt: 'dataRegistro',
     updatedAt: 'dataAtualizacao',
     deletedAt: 'dataDelete',
+    underscored: true,
     sequelize: sequelize, // this bit is important
 });
