@@ -1,8 +1,8 @@
 import * as restify from 'restify'
 import {BadRequestError} from 'restify-errors'
-
 const mpContentType = 'application/merge-patch+json'
 
+//@Author ismael alves
 export const mergePatchBodyParser:restify.RequestHandler = (req, resp, next) =>{
   if(req.getContentType() === mpContentType && req.method === 'PATCH'){
     (<any>req).rawBody = req.body

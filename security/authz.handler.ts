@@ -1,11 +1,10 @@
 import * as restify from 'restify'
-import * as jwt from 'jsonwebtoken'
-import { environment } from "../common/environment";
 import {ForbiddenError} from 'restify-errors'
 import { InvalidCredentialsError } from 'restify-errors';
 import { Usuario } from '../app/models/usuario.model';
 import { utils } from '../app/utils/util';
 
+//@Author ismael alves
 export const authorize: (...profiles: string[])=> restify.RequestHandler = (...profiles)=>{
   return (req, resp, next)=>{
     if(req.headers.authorization !== undefined){
@@ -24,7 +23,7 @@ export const authorize: (...profiles: string[])=> restify.RequestHandler = (...p
             }
           }).catch(next)
         }catch (error) {
-          next(new ForbiddenError('token expirado'))
+          next(new ForbiddenError('token expirado ou não identificado'))
         }
     } else {
       next(new ForbiddenError('token não encontrado'))

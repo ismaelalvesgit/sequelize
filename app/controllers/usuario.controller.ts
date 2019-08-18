@@ -1,44 +1,107 @@
 import {Router} from '../../common/router'
 import * as restify from 'restify'
+import * as validator from 'express-validator'
 import { Usuario } from '../models/usuario.model';
 import { AcessToken } from '../models/acessToken.model';
-import { NotFoundError} from 'restify-errors'
+import { NotFoundError, InvalidCredentialsError} from 'restify-errors'
 import { authenticate } from '../../security/auth.handler';
 import { authorize } from '../../security/authz.handler';
 import { mail } from '../../common/mailer';
 import { utils } from '../utils/util';
+import { environment } from '../../common/environment';
 
 //@Author ismael alves
 class UsuarioController extends Router {
   applyRoutes(application: restify.Server) {
     
     //metodo de login
-    application.post('/login', authenticate)
+    application.post('/login', [
+      validator.check('email').isEmail(),
+      validator.check('senha').isString(),
+      authenticate
+    ])
+
+    //metodo que faz a alteração da senha
+    application.post('/alterar-senha', [
+      validator.header('link').isString(),
+      validator.check('senha').isString(),
+      (req, resp, next)=>{
+        const errors = validator.validationResult(req);
+        if (!errors.isEmpty()) {
+          return resp.json(400,{ errors: errors.array() })
+        }
+        AcessToken.findOne({
+          where:{
+            token:req.header('link')
+          }
+        }).then((data)=>{
+          if(data){
+            Usuario.update({senha:req.body.senha},{
+              where:{
+                id:data.idUsuario
+              }
+            }).then((user)=>{
+              if(user[0] == 1){
+                Usuario.findByPk(data.idUsuario).then((alter)=>{
+                  utils.updateToken(alter!, utils.geradorToken(alter!)).then(()=>{
+                    resp.send('senha alterada com sucesso')
+                  }).catch(next)
+                })
+              }else{
+                resp.send(new NotFoundError('usuário não encontrado'))
+              }
+            }).catch(next)
+          }else{
+            resp.send(new InvalidCredentialsError('link não está mais ativo'))
+          }
+        }).catch(next)
+      }
+    ])
 
     //metodo de reset senha
-    application.post('/reset', (req, resp, next)=>{
+    application.post('/reset', [validator.check('email').isEmail(), (req, resp, next)=>{
+      const errors = validator.validationResult(req);
+      if (!errors.isEmpty()) {
+        return resp.json(400,{ errors: errors.array() })
+      }
       Usuario.findOne({
         where:{
           email: req.body.email
         }
       }).then((user)=>{
         if(user){
-          const link = "http://localhost:3000/reset/"+ utils.geradorToken()
-          console.log(link)
-          mail.resetSenha(user, link).then(()=>{
-            resp.send(`enviamos um email para ${user.email}`)
-          })
+          utils.gerarHash().then((token)=>{
+            utils.updateToken(user, token).then(()=>{
+              mail.resetSenha(user, environment.server.url+"/reset/"+ token).then(()=>{
+                resp.send(`enviamos um email para ${user.email}`)
+                next()
+              })
+            }).catch(next)
+          }).catch(next)
         }else{
-          resp.send(404,'usuário não cadastrado')
+          resp.send(new NotFoundError('usuario não encontrado ou não exite'))
         }
-        next()
-      })
-      .catch(next)
-    })
+      }).catch(next)
+    }])
 
     //metodo que verifica link do reset
-    application.get('/reset', (req, resp, next)=>{
-
+    application.get('/reset/:link', (req, resp, next)=>{
+      AcessToken.findOne({
+        where:{
+          token:req.params.link
+        }
+      }).then((data)=>{
+        if(data){
+          if(new Date() > data.validade){
+            resp.send(new InvalidCredentialsError('link não está mais ativo'))
+          }else{
+            resp.send('link ativo')
+          }
+        }else{
+          resp.send(new InvalidCredentialsError('link não está mais ativo'))
+        }
+        next()
+      }).catch(next)
     })
 
     //metodo de logout
@@ -54,6 +117,7 @@ class UsuarioController extends Router {
           }          
         })).then(()=>{
           resp.send(`usuario ${user.nome} deslogado com sucesso !!!`)
+          next()
         }).catch(next)
       }).catch(next)
     }])
@@ -62,11 +126,12 @@ class UsuarioController extends Router {
     application.post('/usuarios', (req, resp, next)=>{
       Usuario.create(req.body)
       .then(data => {
-        AcessToken.create({idUsuario:data.id})
-        mail.bemVindo(data).then(()=>{
-          resp.send(200, "usuario criado com sucesso "+data.id)
-        })
-        next()
+        AcessToken.create({idUsuario:data.id}).then(()=>{
+          mail.bemVindo(data).then(()=>{
+            resp.send(200, "usuario criado com sucesso "+data.id)
+            next()
+          }).catch(next)
+        }).catch(next)
       }).catch(next);
     })
 
@@ -88,10 +153,10 @@ class UsuarioController extends Router {
     application.get('/usuarios/:id', (req, resp, next)=>{
       Usuario.findByPk(req.params.id)
       .then((data)=>{
-        if(data == null){
-          resp.send(new NotFoundError('documento não encontrado'))
-        }else{
+        if(data){
           resp.json(data)
+        }else{
+          resp.send(new NotFoundError('usuário não encontrado'))
         }
         next()
       }).catch(next)
@@ -106,10 +171,10 @@ class UsuarioController extends Router {
             id:req.params.id
           }
         })
-        if(data == null){
-          resp.send(new NotFoundError('documento não encontrado'))
-        }else{
+        if(data){
           resp.json(data)
+        }else{
+          resp.send(new NotFoundError('usuário não encontrado'))
         }
         next()
       }).catch(next)
@@ -128,7 +193,7 @@ class UsuarioController extends Router {
             resp.json(alter)
           })
         }else{
-          resp.send(new NotFoundError('documento não encontrado'))
+          resp.send(new NotFoundError('usuário não encontrado'))
         }
         next()
       }).catch(next)

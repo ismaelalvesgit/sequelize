@@ -1,6 +1,5 @@
 import * as fs from 'fs'
 import * as restify from 'restify'
-
 import {environment} from '../common/environment'
 import {Router} from '../common/router'
 import {mergePatchBodyParser} from './merge-patch.parser'
@@ -10,6 +9,7 @@ import { sequelize } from '../common/sequelize'
 import { Sequelize } from 'sequelize';
 import { logger } from '../common/logger';
 
+//@Author ismael alves
 export class Server {
 
   application!: restify.Server;
@@ -47,10 +47,17 @@ export class Server {
           router.applyRoutes(this.application)
         }
 
+        //iniciando server
         this.application.listen(environment.server.port, ()=>{
            resolve(this.application)
         })
 
+        //quando ocorrem os eventos no server
+        this.application.on('InternalServer', function(req, res, err, callback) {
+          // this will get fired first, as it's the most relevant listener
+          console.log("error interno", err)
+          return callback();
+        })
         this.application.on('restifyError', handleError)
 
       }catch(error){

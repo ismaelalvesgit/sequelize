@@ -2,10 +2,10 @@ import { Model, DataTypes } from "sequelize";
 import { sequelize } from "../../common/sequelize";
 import { Usuario } from "./usuario.model";
 
-
+//@Author ismael alves
 export class AcessToken  extends Model{
     id!:number
-    idUsuario!:Usuario
+    idUsuario!:number
     token!:string
     validade!:Date
 
@@ -29,7 +29,7 @@ AcessToken.init({
         },
         allowNull: false,
     },
-    validate:{
+    validade:{
         type: new DataTypes.DATE,
         allowNull:true
     },

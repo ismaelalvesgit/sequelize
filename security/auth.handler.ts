@@ -1,13 +1,15 @@
 import * as restify from 'restify'
-import * as jwt from 'jsonwebtoken'
 import * as bcrypt from 'bcrypt'
+import * as validator from 'express-validator'
 import { NotAuthorizedError } from 'restify-errors'
-import { environment } from '../common/environment'
 import { Usuario } from '../app/models/usuario.model';
-import { AcessToken } from '../app/models/acessToken.model';
 import { utils } from '../app/utils/util';
 
 export const authenticate: restify.RequestHandler = (req, resp, next)=>{
+  const errors = validator.validationResult(req);
+  if (!errors.isEmpty()) {
+    return resp.json(400,{ errors: errors.array() })
+  }
   const {email, senha} = req.body
   Usuario.findOne({
     where:{
@@ -15,29 +17,25 @@ export const authenticate: restify.RequestHandler = (req, resp, next)=>{
     },
     attributes:['email', 'senha','id']
   }).then((user)=>{
-      if(user && bcrypt.compareSync(senha, user.senha)){
-        const token = utils.geradorToken(user)
-        AcessToken.update({token:token, validate: new Date(new Date().getTime() + 60 *60000)},{
+    if(user && bcrypt.compareSync(senha, user.senha)){
+      const token = utils.geradorToken(user)
+      utils.updateToken(user, token).then(()=>{
+        Usuario.update({online:true},{
           where:{
-            idUsuario:user.id
-          }
-        }).then(()=>{
-          Usuario.update({online:true},{
+            id: user.id
+          },
+        }).then(()=> Usuario.findOne({
             where:{
-              id: user.id
+              email: email
             },
-          }).then(()=> Usuario.findOne({
-              where:{
-                email: email
-              },
-            }).then((data)=>{
-              resp.json({user:data, accessToken: token})
-              return next(false)
-            })
-          )
-        })
-      } else {
-        return next(new NotAuthorizedError('Credenciais invalidas'))
-      }
+          }).then((data)=>{
+            resp.json({user:data, accessToken: token})
+            return next(false)
+          })
+        )
+      })
+    } else {
+      return next(new NotAuthorizedError('Credenciais invalidas'))
+    }
   }).catch(next)
 }

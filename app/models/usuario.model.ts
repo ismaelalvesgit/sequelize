@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { environment } from '../../common/environment';
 import { AcessToken } from "./acessToken.model";
 
-
+//@Author ismael alves
 export class Usuario  extends Model{
     id!:number
     nome!:string

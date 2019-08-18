@@ -23,6 +23,7 @@ const readHTMLFILE = function(path:any, callback:any){
     })
 }
 
+//@Author ismael alves
 class Mail{
 
     bemVindo(user:Usuario){

@@ -1,5 +1,12 @@
+//@Author ismael alves
 export const environment = {
-  server: { port: process.env.SERVER_PORT || 3000 },
+  server: { 
+    port: process.env.SERVER_PORT || 3000,
+    url: process.env.SERVER_URL  || 'http://localhost:3000'
+  },
+  cliente:{
+    url: process.env.CLIENT_URL || 'http://localhost:4200'
+  },
   db: {
     host: process.env.DB_URL || 'localhost',
     user: process.env.DB_USER || 'root',
@@ -21,7 +28,7 @@ export const environment = {
     host: process.env.EMAIL_HOST || 'smtp.gmail.com',
     port: process.env.EMAIL_PORT ||  587,
     secure: process.env.EMAIL_SECURE || false,
-    user: process.env.EMAIL_USER || 'cearaismael1997@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || '',
+    user: process.env.EMAIL_USER || 'email',
+    pass: process.env.EMAIL_PASSWORD || 'senha',
   }
 }

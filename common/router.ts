@@ -2,6 +2,7 @@ import * as restify from 'restify'
 import {EventEmitter} from 'events'
 import {NotFoundError} from 'restify-errors'
 
+//@Author ismael alves
 export abstract class Router extends EventEmitter {
 
   abstract applyRoutes(application: restify.Server):any

@@ -4,6 +4,7 @@ import { environment } from '../../common/environment'
 import { AcessToken } from '../models/acessToken.model';
 import { Usuario } from '../models/usuario.model';
 
+//@Author ismael alves
 class Utils{
     
     //metodo que pega usuario logado pelo token
@@ -37,6 +38,22 @@ class Utils{
     //metodo que veirifica token ativo
     verfiricaToken(token:string){
         return jwt.verify(token, environment.security.apiSecret)
+    }
+
+    //metodo que atualiza token
+    updateToken(user:Usuario, token:string){
+        return AcessToken.update({token:token, validade: new Date(new Date().getTime() + 60 *60000)},{
+            where:{
+              idUsuario:user.id
+            }
+        })
+    }
+
+    //metodo que gera hash
+    gerarHash():Promise<string>{
+        return new Promise((resolve, reject)=>{
+            resolve(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15))
+        })
     }
 }
 
