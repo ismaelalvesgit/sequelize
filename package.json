@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "bunyan": "^1.8.12",
     "cors": "^2.8.5",
     "express-validator": "^6.1.1",
